@@ -6,7 +6,7 @@
 #include <iostream>
 
 int main(int argc, char **argv) {
-    ESM::FalloutESM mainESM("");
+    ESM::FalloutESM mainESM("/media/andrew/Windows 7/SteamLibrary/SteamApps/common/Fallout New Vegas/Data/FalloutNV.esm");
     
     if (mainESM.IsOpen() == false) {
         auto loadMessages = mainESM.GetLoadMessages();

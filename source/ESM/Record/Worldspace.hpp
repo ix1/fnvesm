@@ -3,6 +3,8 @@
 namespace ESM
 {
     class Worldspace {
+        friend class FalloutESM;
+        
     public:
         Worldspace(FormIdentifier id);
         ~Worldspace();
@@ -39,9 +41,14 @@ namespace ESM
         IMPFField mFootstepData;
         
         std::vector<uint32_t> mOffsetData;
+        std::vector<FormIdentifier> mCells;
         
         float mLODWaterHeight;
         uint16_t mParentFlags;
         uint8_t mFlags;
+        
+        inline std::vector<FormIdentifier>& GetCellsWritable() {
+            return mCells;
+        }
     };
 }

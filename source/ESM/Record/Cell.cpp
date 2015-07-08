@@ -6,9 +6,17 @@
 using namespace ESM;
 
 Cell::Cell(FormIdentifier id, int block, int subblock) 
-    : mFormID(id), mBlock(block), mSubblock(subblock)
+    : mFormID(id), mLocationType(CellLocationType::Internal)
 {
-    
+    mCellBlockLocation.AsInterior.Block = block;
+    mCellBlockLocation.AsInterior.Subblock = subblock;
+}
+
+Cell::Cell(FormIdentifier id, int x, int y, bool isblock) 
+    : mFormID(id), mLocationType(CellLocationType::External)
+{
+    mCellBlockLocation.AsExterior.X = x;
+    mCellBlockLocation.AsExterior.Y = y;
 }
 
 Cell::~Cell() {

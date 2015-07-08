@@ -2,6 +2,11 @@
 
 namespace ESM
 {
+    enum class CellLocationType {
+        Internal = 0,
+        External
+    };
+    
     enum class CellFlag : uint8_t {
         Interior = 0x01,
         Water = 0x02,
@@ -24,6 +29,7 @@ namespace ESM
         
     public:
         Cell(FormIdentifier id, int block, int subblock);
+        Cell(FormIdentifier id, int x, int y, bool isblock);
         ~Cell();
         
         bool Parse(ESMStream& stream);
@@ -50,8 +56,21 @@ namespace ESM
         
     private:
         FormIdentifier mFormID;
-        int mBlock;
-        int mSubblock;
+        
+        union {
+            struct {
+                int Block;
+                int Subblock;
+            } AsInterior;
+            
+            struct {
+                int X;
+                int Y;
+            } AsExterior;
+        } mCellBlockLocation;
+        
+        CellLocationType mLocationType;
+        
         std::string mEditorID;
         std::string mFullName;
         CellFlag mFlags;

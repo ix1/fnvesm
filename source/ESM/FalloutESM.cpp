@@ -273,8 +273,6 @@ bool FalloutESM::ParseCells(ESMStream& substream) {
         }
     }
     
-    std::cout << "Loaded " << mCells.size() << " cells." << std::endl;
-    
     return true;
 }
 
@@ -292,11 +290,9 @@ bool FalloutESM::ParseWorlds(ESMStream& substream) {
                 ESMStream groupStream(substream, header.Size - sizeof(RecordHeader));
                 
                 if (ParseCellGroup(groupStream, -1, -1) == true) {
-                    //ParseCellInnerGroup adds the error message
                     return false;
                 }
                 
-                //groupStream.Skip(groupStream.GetSize());
                 break;
             }
             
@@ -368,7 +364,7 @@ bool FalloutESM::ParseCellInnerGroup(ESMStream& stream, const RecordHeader& head
     
     switch(header.Meta.AsGroup.Type) {
         case GroupType::WorldChildren:
-            //TODO
+            groupStream.Skip(groupStream.GetSize());
             break;
             
         case GroupType::InteriorCellBlock:
@@ -378,11 +374,11 @@ bool FalloutESM::ParseCellInnerGroup(ESMStream& stream, const RecordHeader& head
             return ParseCellGroup(groupStream, block, header.Meta.AsGroup.Label.AsCellBlockNumber);
             
         case GroupType::ExteriorCellBlock:
-            //TODO
+            ParseCellExteriorGroup(groupStream, 0, 0, true);
             break;
             
         case GroupType::ExteriorCellSubBlock:
-            //TODO
+            ParseCellExteriorGroup(groupStream, 0, 0, false);
             break;
             
         case GroupType::CellChildren:
@@ -501,6 +497,100 @@ bool FalloutESM::ParseCellChildren(FormIdentifier cellID, CellChildType childTyp
         }
         
         
+    }
+    
+    return true;
+}
+
+bool FalloutESM::ParseWorldCellGroup(ESMStream& stream, FormIdentifier parentWorld) {
+    auto worldItr = mWorldspaces.find(parentWorld);
+    
+    if (worldItr == mWorldspaces.end()) {
+        
+        return false;
+    }
+    
+    Worldspace& world = (*worldItr).second;
+    
+    while(stream.IsValid() == true) {
+        RecordHeader header;
+        
+        ParseRecordHeader(stream, header);
+        
+        switch(header.Tag) {
+            case ESMTag::GRUP:
+            {
+                if (ParseCellInnerGroup(stream, header, -1, -1) == false) {
+                    return false;
+                }
+                
+                break;
+            }
+            
+            case ESMTag::CELL:
+            {
+                ESMStream cellStream(stream, header.Size);
+                
+                Cell cell(header.Meta.AsRecord.FormID, -1, -1);
+                
+                if (cell.Parse(cellStream) == false) {
+                    mLoadMessages.push_back("Error: invalid cell record in the world group");
+                    return false;
+                }
+                
+                mCells.insert(std::pair<FormIdentifier, Cell>(header.Meta.AsRecord.FormID, std::move(cell)));
+                world.GetCellsWritable().push_back(header.Meta.AsRecord.FormID);
+                break;
+            }
+            
+            default:
+                return false;
+        }
+    }
+    
+    return true;
+}
+
+bool FalloutESM::ParseCellExteriorGroup(ESMStream& stream, int x, int y, bool isblock) {
+    while(stream.IsValid() == true) {
+        RecordHeader header;
+        
+        ParseRecordHeader(stream, header);
+        
+        std::cout << "Exterior group tag: " << ESMUtility::TagToString(header.Tag) << std::endl;
+        
+        switch(header.Tag) {
+            case ESMTag::GRUP:
+            {
+                if (ParseCellInnerGroup(stream, header, -1, -1) == false) {
+                    return false;
+                }
+                
+                break;
+            }
+            
+            case ESMTag::CELL:
+            {
+                ESMStream recordStream(stream, header.Size);
+                
+                Cell cell(header.Meta.AsRecord.FormID, x, y, isblock);
+                
+                if (cell.Parse(recordStream) == false) {
+                    mLoadMessages.push_back("Error: invalid cell record in the world group");
+                    return false;
+                }
+                
+                mCells.insert(std::pair<FormIdentifier, Cell>(header.Meta.AsRecord.FormID, std::move(cell)));
+                break;
+            }
+                
+            default:
+            {
+                ESMStream recordStream(stream, header.Size);
+                recordStream.Skip(recordStream.GetSize());
+                break;
+            }
+        }
     }
     
     return true;
