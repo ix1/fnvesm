@@ -21,6 +21,12 @@ FalloutESM::~FalloutESM() {
 }
 
 void FalloutESM::Parse() {
+    if (mFileStream.is_open() == false) {
+        mLoadMessages.push_back("Error: couldn't open the ESM file");
+        
+        return;
+    }
+    
     ESMStream primaryStream(mFileStream, mBuffer);
     
     if (ParseHeader(primaryStream) == false) {
