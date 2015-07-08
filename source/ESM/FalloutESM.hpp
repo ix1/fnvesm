@@ -32,6 +32,14 @@ namespace ESM
             return mLandTextures;
         }
         
+        inline const std::map<FormIdentifier, Cell>& GetCells() const {
+            return mCells;
+        }
+        
+        inline const std::map<FormIdentifier, Worldspace>& GetWorldspaces() const {
+            return mWorldspaces;
+        }
+        
     protected:
         void Parse();
         
@@ -42,7 +50,11 @@ namespace ESM
         bool ParseLandTextureSets(ESMStream& substream);
         bool ParseScripts(ESMStream& substream);
         bool ParseCells(ESMStream& substream);
-        bool ParseWorld(ESMStream& substream);
+        bool ParseWorlds(ESMStream& substream);
+        bool ParseCellGroup(ESM::ESMStream& stream, int block, int subblock);
+        
+        bool ParseCellInnerGroup(ESMStream& stream, const RecordHeader& header, int block, int subblock);
+        bool ParseCellChildren(FormIdentifier cellID, CellChildType childType, ESMStream& stream, int block, int subblock);
         
     private:
         const std::string& mFile;
@@ -55,5 +67,8 @@ namespace ESM
         std::map<FormIdentifier, TextureSet> mTextures;
         std::map<FormIdentifier, LandscapeTextureSet> mLandTextures;
         std::map<FormIdentifier, FalloutScript> mScripts;
+        
+        std::map<FormIdentifier, Cell> mCells;
+        std::map<FormIdentifier, Worldspace> mWorldspaces;
     };
 }

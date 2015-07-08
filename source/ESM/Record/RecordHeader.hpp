@@ -4,7 +4,7 @@ namespace ESM
 {
     enum class GroupType : uint32_t {
         Record = 0,
-        WorldFormId = 1,
+        WorldChildren = 1,
         InteriorCellBlock = 2,
         InteriorCellSubBlock = 3,
         ExteriorCellBlock = 4,
@@ -20,35 +20,37 @@ namespace ESM
         Deleted = 0x20,
         Disabled = 0x800,
         Ignored = 0x1000,
-        Compressed = 0x40000,
+        Compressed = 0x40000
     };
     
 #pragma pack(push, 1)
 
-    struct GroupHeader {
+    struct RecordHeader {
         ESMTag Tag;
         uint32_t Size;
         
         union {
-            ESMTag AsRecord;
-            FormIdentifier AsFormIdentifier;
-            uint32_t AsCellBlockNumber;
-            int16_t AsExteriorCellNumber;
-        } Label;
-        
-        uint32_t GroupType;
-        uint16_t Datestamp;
-        uint8_t Unknown[6];
-    };
-    
-    struct RecordHeader {
-        ESMTag Tag;
-        uint32_t Size;
-        uint32_t Flags;
-        FormIdentifier FormID;
-        uint32_t Revision;
-        uint16_t Version;
-        uint16_t Unknown;
+            struct {
+                union {
+                    ESMTag AsRecord;
+                    FormIdentifier AsFormIdentifier;
+                    uint32_t AsCellBlockNumber;
+                    int16_t AsExteriorCellNumber;
+                } Label;
+                
+                GroupType Type;
+                uint16_t Datestamp;
+                uint8_t Unknown[6];
+            } AsGroup;
+            
+            struct {
+                uint32_t Flags;
+                FormIdentifier FormID;
+                uint32_t Revision;
+                uint16_t Version;
+                uint16_t Unknown;
+            } AsRecord;
+        } Meta;
     };
     
     struct FieldHeader {

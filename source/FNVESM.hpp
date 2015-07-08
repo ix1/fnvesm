@@ -14,4 +14,10 @@ typedef uint32_t FormIdentifier;
 namespace ESM
 {
     class ESMStream;
+    
+    struct Vector3F {
+        float X;
+        float Y;
+        float Z;
+    };
 }

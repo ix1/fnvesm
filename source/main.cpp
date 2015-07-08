@@ -11,6 +11,8 @@ int main(int argc, char **argv) {
     if (mainESM.IsOpen() == false) {
         auto loadMessages = mainESM.GetLoadMessages();
         
+        std::cout << "There was an error loading the ESM. Messages: " << std::endl;
+        
         for(auto itr = loadMessages.begin(); itr != loadMessages.end(); ++itr) {
             std::cout << *itr << std::endl;
         }
@@ -34,6 +36,14 @@ int main(int argc, char **argv) {
        
        std::cout << "</script>" << std::endl;
     }*/
+    
+    const auto worldspaces = mainESM.GetWorldspaces();
+    
+    std::cout << "There are: " << worldspaces.size() << " world spaces." << std::endl;
+    
+    for(auto itr = worldspaces.begin(); itr != worldspaces.end(); ++itr) {
+        (*itr).second.ExportXML(std::cout);
+    }
     
     return 0;
 }

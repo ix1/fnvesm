@@ -1,20 +1,36 @@
 add_executable(fnvesm 
+    ESM/Record/Cell.hpp
+    ESM/Record/Cell.cpp
+    
     ESM/Record/FalloutScript.hpp
     ESM/Record/FalloutScript.cpp
+    
     ESM/Record/FieldParser.hpp
     ESM/Record/FieldParser.cpp
     
     ESM/Record/GameSetting.hpp
     ESM/Record/GameSetting.cpp
+    
     ESM/Record/RecordHeader.hpp
     ESM/Record/Records.hpp
+    
     ESM/Record/TextureSet.hpp
     ESM/Record/TextureSet.cpp
     
+    ESM/Record/WorldObject.hpp
+    ESM/Record/WorldObject.cpp
+    
+    ESM/Record/Worldspace.hpp
+    ESM/Record/Worldspace.cpp
     
     ESM/ESMStream.hpp
     ESM/ESMStream.cpp
+    
     ESM/ESMTag.hpp
+    
+    ESM/ESMUtility.hpp
+    ESM/ESMUtility.cpp
+    
     ESM/FalloutESM.hpp
     ESM/FalloutESM.cpp
     
