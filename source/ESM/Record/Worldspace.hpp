@@ -13,6 +13,10 @@ namespace ESM
         
         void ExportXML(std::ostream& output) const;
         
+        inline FormIdentifier GetFormID() const {
+            return mFormID;
+        }
+        
     private:
         FormIdentifier mFormID;
         std::string mEditorID;

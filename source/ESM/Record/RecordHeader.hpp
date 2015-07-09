@@ -35,7 +35,10 @@ namespace ESM
                     ESMTag AsRecord;
                     FormIdentifier AsFormIdentifier;
                     uint32_t AsCellBlockNumber;
-                    int16_t AsExteriorCellNumber;
+                    struct {
+                        int8_t Y;
+                        int8_t X;
+                    } AsExteriorCellNumber;
                 } Label;
                 
                 GroupType Type;

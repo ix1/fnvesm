@@ -54,9 +54,12 @@ namespace ESM
         bool ParseCellGroup(ESM::ESMStream& stream, int block, int subblock);
         
         bool ParseCellInnerGroup(ESMStream& stream, const RecordHeader& header, int block, int subblock);
+        bool ParseCellChildrenGroup(ESMStream& stream, const RecordHeader& header, int block, int subblock);
         bool ParseCellChildren(FormIdentifier cellID, CellChildType childType, ESMStream& stream, int block, int subblock);
+        
         bool ParseWorldCellGroup(ESMStream& stream, FormIdentifier parentWorld);
-        bool ParseCellExteriorGroup(ESMStream& stream, int x, int y, bool isblock);
+        bool ParseWorldInnerGroup(ESM::ESMStream& stream, ESM::Worldspace& world, const ESM::RecordHeader& header, int x, int y);
+        bool ParseCellExteriorGroup(ESMStream& stream, Worldspace& world, int x, int y, bool isblock);
         
     private:
         const std::string& mFile;

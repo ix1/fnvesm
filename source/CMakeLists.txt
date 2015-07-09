@@ -11,6 +11,9 @@ add_executable(fnvesm
     ESM/Record/GameSetting.hpp
     ESM/Record/GameSetting.cpp
     
+    ESM/Record/LandDefinition.hpp
+    ESM/Record/LandDefinition.cpp
+    
     ESM/Record/RecordHeader.hpp
     ESM/Record/Records.hpp
     
