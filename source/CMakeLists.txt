@@ -41,4 +41,6 @@ add_executable(fnvesm
     main.cpp
 )
 
+target_link_libraries(fnvesm z)
+
 install(TARGETS fnvesm RUNTIME DESTINATION bin)

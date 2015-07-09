@@ -65,6 +65,7 @@ namespace ESM
         const std::string& mFile;
         std::ifstream mFileStream;
         std::vector<uint8_t> mBuffer;
+        std::vector<uint8_t> mDecompressedBuffer;
         std::vector<std::string> mLoadMessages;
         bool mIsOpen;
         

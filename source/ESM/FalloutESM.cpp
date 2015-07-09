@@ -11,7 +11,7 @@ using namespace ESM;
 static void ParseRecordHeader(ESMStream& stream, RecordHeader& header);
 
 FalloutESM::FalloutESM(const std::string& filename)
-    : mFile(filename), mFileStream(filename), mBuffer(1024), mIsOpen(false)
+    : mFile(filename), mFileStream(filename, std::ios::binary), mBuffer(1024), mDecompressedBuffer(8196), mIsOpen(false)
 {
     Parse();
 }
@@ -290,6 +290,7 @@ bool FalloutESM::ParseWorlds(ESMStream& substream) {
                 ESMStream groupStream(substream, header.Size - sizeof(RecordHeader));
                 
                 if (ParseWorldCellGroup(groupStream, header.Meta.AsGroup.Label.AsFormIdentifier) == false) {
+                    mLoadMessages.push_back("Error: unable to parse world cell group");
                     return false;
                 }
                 
@@ -330,6 +331,7 @@ bool FalloutESM::ParseCellGroup(ESMStream& stream, int block, int subblock) {
             case ESMTag::GRUP:
             {
                 if (ParseCellInnerGroup(stream, header, block, subblock) == false) {
+                    mLoadMessages.push_back("Error: unable to parse cell group");
                     return false;
                 }
                 
@@ -362,11 +364,7 @@ bool FalloutESM::ParseCellGroup(ESMStream& stream, int block, int subblock) {
 bool FalloutESM::ParseCellInnerGroup(ESMStream& stream, const RecordHeader& header, int block, int subblock) {
     ESMStream groupStream(stream, header.Size - sizeof(RecordHeader));
     
-    switch(header.Meta.AsGroup.Type) {
-        case GroupType::WorldChildren:
-            groupStream.Skip(groupStream.GetSize());
-            break;
-            
+    switch(header.Meta.AsGroup.Type) {            
         case GroupType::InteriorCellBlock:
             return ParseCellGroup(groupStream, header.Meta.AsGroup.Label.AsCellBlockNumber, -1);
             
@@ -377,7 +375,7 @@ bool FalloutESM::ParseCellInnerGroup(ESMStream& stream, const RecordHeader& head
             return ParseCellChildren(header.Meta.AsGroup.Label.AsFormIdentifier, CellChildType::Direct, groupStream, block, subblock);
 
         default:
-            mLoadMessages.push_back("Error: invalid group type for a cell record");
+            mLoadMessages.push_back("Error: invalid group type for an interior cell record");
             return false;
     }
     
@@ -425,6 +423,7 @@ bool FalloutESM::ParseCellChildren(FormIdentifier cellID, CellChildType childTyp
         ParseRecordHeader(stream, header);
         
         switch(header.Tag) {
+            // Static objects
             case ESMTag::REFR: 
             {
                 ESMStream substream(stream, header.Size);
@@ -439,6 +438,7 @@ bool FalloutESM::ParseCellChildren(FormIdentifier cellID, CellChildType childTyp
                 break;
             }
             
+            // Creatures
             case ESMTag::ACRE:
             {
                 ESMStream substream(stream, header.Size);
@@ -452,14 +452,16 @@ bool FalloutESM::ParseCellChildren(FormIdentifier cellID, CellChildType childTyp
                 cell.AddObject(childType,obj);
                 break;
             }
-                
+            
+            // Grenades
             case ESMTag::PGRE:
             {
                 ESMStream substream(stream, header.Size);
                 substream.Skip(substream.GetSize());
                 break;
             }
-                
+            
+            // Missiles
             case ESMTag::PMIS:
             {
                 ESMStream substream(stream, header.Size);
@@ -467,6 +469,7 @@ bool FalloutESM::ParseCellChildren(FormIdentifier cellID, CellChildType childTyp
                 break;
             }
                 
+            // Characters
             case ESMTag::ACHR:
             {
                 ESMStream substream(stream, header.Size);
@@ -484,6 +487,7 @@ bool FalloutESM::ParseCellChildren(FormIdentifier cellID, CellChildType childTyp
             case ESMTag::GRUP:
             {
                 if (ParseCellChildrenGroup(stream, header, block, subblock) == false) {
+                    mLoadMessages.push_back("Error: unable to parse cell children");
                     return false;
                 }
                 
@@ -501,8 +505,26 @@ bool FalloutESM::ParseCellChildren(FormIdentifier cellID, CellChildType childTyp
             case ESMTag::LAND:
             {
                 ESMStream substream(stream, header.Size);
+                uint32_t decompSize;
                 
-                //TODO: This record stream is compressed
+                substream.Read32(decompSize);
+                
+                const size_t sourceSize = header.Size - 4;
+                
+                mBuffer.reserve(sourceSize);
+                mDecompressedBuffer.reserve(decompSize);
+                
+                substream.ReadRaw((char *)&mBuffer[0], sourceSize);
+                
+                if (ESMUtility::ZlibDecompress(mBuffer, mDecompressedBuffer, sourceSize, decompSize) == false) {
+                    mLoadMessages.push_back("Error: unable to decompress zlib LAND data");
+                    //TODO: There is a single land entry in FalloutNV.esm that appears corrupted, skip it
+                    break;
+                }
+                
+                
+                
+                
                 break;
             }
             
@@ -521,7 +543,7 @@ bool FalloutESM::ParseWorldCellGroup(ESMStream& stream, FormIdentifier parentWor
     auto worldItr = mWorldspaces.find(parentWorld);
     
     if (worldItr == mWorldspaces.end()) {
-        
+        mLoadMessages.push_back("Error: trying to add entites to a non-existent world");
         return false;
     }
     
@@ -536,6 +558,7 @@ bool FalloutESM::ParseWorldCellGroup(ESMStream& stream, FormIdentifier parentWor
             case ESMTag::GRUP:
             {
                 if (ParseWorldInnerGroup(stream, world, header, 0, 0) == false) {
+                    mLoadMessages.push_back("Error: unable to parse world cell group");
                     return false;
                 }
                 
@@ -553,6 +576,7 @@ bool FalloutESM::ParseWorldCellGroup(ESMStream& stream, FormIdentifier parentWor
                     return false;
                 }
                 
+                //TODO: Remove once done
                 std::cout << "Added cell " << cell.GetEditorID() << std::endl;
                 
                 mCells.insert(std::pair<FormIdentifier, Cell>(header.Meta.AsRecord.FormID, std::move(cell)));
@@ -561,6 +585,7 @@ bool FalloutESM::ParseWorldCellGroup(ESMStream& stream, FormIdentifier parentWor
             }
             
             default:
+                mLoadMessages.push_back("Error: invalid tag inside the world cell group");
                 return false;
         }
     }
@@ -620,6 +645,7 @@ bool FalloutESM::ParseCellExteriorGroup(ESMStream& stream, Worldspace& world, in
             case ESMTag::GRUP:
             {
                 if (ParseWorldInnerGroup(stream, world, header, x, y) == false) {
+                    mLoadMessages.push_back("Error: unable to parse world exterior cell group");
                     return false;
                 }
                 
@@ -644,8 +670,7 @@ bool FalloutESM::ParseCellExteriorGroup(ESMStream& stream, Worldspace& world, in
                 
             default:
             {
-                ESMStream recordStream(stream, header.Size);
-                recordStream.Skip(recordStream.GetSize());
+                mLoadMessages.push_back("Error: invalid tag inside a world exterior cell group");
                 break;
             }
         }

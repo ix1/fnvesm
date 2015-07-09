@@ -43,6 +43,8 @@ int main(int argc, char **argv) {
     
     for(auto itr = worldspaces.begin(); itr != worldspaces.end(); ++itr) {
         (*itr).second.ExportXML(std::cout);
+        
+        
     }
     
     return 0;

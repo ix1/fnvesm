@@ -72,9 +72,13 @@ bool Cell::Parse(ESMStream& stream) {
                 
             case ESMTag::XCLR:
             {
-                FormIdentifier regionID;
-                FieldParser::ParseFormID(stream, header.Size, regionID);
-                mRegionIdentifiers.push_back(regionID);
+                const size_t regionCount = header.Size / sizeof(FormIdentifier);
+                mRegionIdentifiers.reserve(regionCount);
+                
+                for(size_t x = 0; x < regionCount; ++x) {
+                    FieldParser::ParseFormID(stream, sizeof(FormIdentifier), mRegionIdentifiers[x]);
+                }
+                
                 break;
             }
             

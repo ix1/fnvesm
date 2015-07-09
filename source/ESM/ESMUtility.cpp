@@ -1,6 +1,8 @@
 #include "../FNVESM.hpp"
 #include "ESMTag.hpp"
 #include "ESMUtility.hpp"
+#include <zlib.h>
+#include <cstring>
 using namespace ESM;
 
 std::string ESMUtility::TagToString(ESMTag tag)
@@ -22,4 +24,29 @@ std::string ESMUtility::TagToString(ESMTag tag)
     *pvalue = '\0';
     
     return std::string(name);
+}
+
+bool ESMUtility::ZlibDecompress(std::vector<uint8_t>& source, std::vector<uint8_t>& destination, size_t sourceLength, size_t outLength) {
+    z_stream zlibStream;
+    
+    memset(&zlibStream, 0, sizeof(zlibStream));
+    
+    zlibStream.avail_in = sourceLength;
+    zlibStream.avail_out = outLength;
+    zlibStream.next_in = &source[0];
+    zlibStream.next_out = &destination[0];
+    
+    if (inflateInit2(&zlibStream, 0) != Z_OK) {
+        return false;
+    }
+    
+    int result = inflate(&zlibStream, Z_FINISH);
+    
+    inflateEnd(&zlibStream);
+    
+    if (result != Z_STREAM_END) {
+        return false;
+    }
+    
+    return true;
 }
