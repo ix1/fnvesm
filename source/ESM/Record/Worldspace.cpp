@@ -146,5 +146,9 @@ bool Worldspace::Parse(ESMStream& stream) {
 void Worldspace::ExportXML(std::ostream& output) const {
     output << "<worldspace id=\"" << mEditorID << "\" form=\"" << mFormID << "\">" << std::endl;
     
+    for (auto itr = mCells.begin(); itr != mCells.end(); ++itr) {
+        output << "\t<cell form=\"" << (*itr) << "\" />" << std::endl;
+    }
+    
     output << "</worldspace>" << std::endl;
 }

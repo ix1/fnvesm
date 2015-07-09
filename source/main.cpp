@@ -5,8 +5,13 @@
 #include "ESM/FalloutESM.hpp"
 #include <iostream>
 
-int main(int argc, char **argv) {
-    ESM::FalloutESM mainESM("/media/andrew/Windows 7/SteamLibrary/SteamApps/common/Fallout New Vegas/Data/FalloutNV.esm");
+int main(int argc, char **argv) {    
+    if(argc != 2) {
+        std::cout << "USAGE: " << argv[0] << " <esm>" << std::endl;
+        return -1;
+    }
+    
+    ESM::FalloutESM mainESM(argv[1]);
     
     if (mainESM.IsOpen() == false) {
         auto loadMessages = mainESM.GetLoadMessages();
@@ -43,8 +48,6 @@ int main(int argc, char **argv) {
     
     for(auto itr = worldspaces.begin(); itr != worldspaces.end(); ++itr) {
         (*itr).second.ExportXML(std::cout);
-        
-        
     }
     
     return 0;

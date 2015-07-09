@@ -4,7 +4,7 @@
 #include "ESMStream.hpp"
 using namespace ESM;
 
-ESMStream::ESMStream(std::ifstream& stream, std::vector<uint8_t>& buffer) 
+ESMStream::ESMStream(std::istream& stream, std::vector<uint8_t>& buffer) 
     : mStream(stream), mBuffer(buffer), mParent(*this), mOffset(0)
 {
     stream.seekg(0, std::ios::end);
@@ -18,6 +18,12 @@ ESMStream::ESMStream(ESMStream& parent, size_t localSize)
     : mStream(parent.mStream), mBuffer(parent.mBuffer), mParent(parent), mLocalSize(localSize), mOffset(0)
 {
     
+}
+
+ESMStream::ESMStream(ESMStream& base, std::istream& source, size_t size) 
+    : mStream(source), mBuffer(base.mBuffer), mParent(*this), mLocalSize(size), mOffset(0)
+{
+
 }
 
 ESMStream::~ESMStream() {

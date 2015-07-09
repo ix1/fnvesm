@@ -6,6 +6,8 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <streambuf> //ZZ
+#include <sstream>
 #include <list>
 #include <cassert>
 

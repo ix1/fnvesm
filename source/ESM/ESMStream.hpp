@@ -1,11 +1,14 @@
 #pragma once
 
 namespace ESM
-{
+{    
     class ESMStream {
     public:
-        ESMStream(std::ifstream& stream, std::vector<uint8_t>& buffer);
+        ESMStream(std::istream& stream, std::vector<uint8_t>& buffer);
         ESMStream(ESMStream& parent, size_t localSize);
+        
+        // Used for decompression only - does not merge with the parent!
+        ESMStream(ESMStream& base, std::istream& source, size_t size);
         ~ESMStream();
         
         inline ESMStream& operator=(const ESMStream & rhs) {
@@ -118,7 +121,7 @@ namespace ESM
         }
         
     private:
-        std::ifstream& mStream;
+        std::istream& mStream;
         std::vector<uint8_t>& mBuffer;
         ESMStream& mParent;
         size_t mLocalSize;

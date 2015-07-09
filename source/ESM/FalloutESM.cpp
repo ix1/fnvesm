@@ -521,9 +521,19 @@ bool FalloutESM::ParseCellChildren(FormIdentifier cellID, CellChildType childTyp
                     //TODO: There is a single land entry in FalloutNV.esm that appears corrupted, skip it
                     break;
                 }
+
+                //This is fairly unpleasant but functions
+                std::stringstream dataStream;
+                dataStream.rdbuf()->pubsetbuf(reinterpret_cast<char *>(&mDecompressedBuffer[0]), decompSize);
                 
+                ESMStream decompressedStream(stream, dataStream, decompSize);
                 
+                LandDefinition landDefinition(header.Meta.AsRecord.FormID);
                 
+                if (landDefinition.Parse(decompressedStream) == false) {
+                    mLoadMessages.push_back("Error: invalid LAND record");
+                    return false;
+                }
                 
                 break;
             }
