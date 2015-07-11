@@ -100,8 +100,9 @@ namespace ESM
         
         inline void PeekTag(ESMTag& tag) {
             if (mOffset + sizeof(tag) <= mLocalSize) {
+                std::streamoff originalPosition = mStream.tellg();
                 mStream.read((char *)&tag, sizeof(tag));
-                mStream.seekg(-sizeof(tag), std::ios::cur);
+                mStream.seekg(originalPosition, std::ios::beg);
             } else {
                 assert(mOffset + sizeof(tag) <= mLocalSize);
                 tag = ESMTag::Invalid;
