@@ -142,6 +142,17 @@ void Cell::ExportYAML(int tablevel, std::ostream& stream) const {
         (*itr).ExportYAML(tablevel + 1, stream);
     }
     
+    ESMUtility::EmitTabs(tablevel, stream) << "  tobjs:" << std::endl;
+    
+    for(auto itr = mTemporaryObjects.begin(); itr != mTemporaryObjects.end(); ++itr) {
+        (*itr).ExportYAML(tablevel + 1, stream);
+    }
+    
+    ESMUtility::EmitTabs(tablevel, stream) << "  dobjs:" << std::endl;
+    for(auto itr = mDistantObjects.begin(); itr != mDistantObjects.end(); ++itr) {
+        (*itr).ExportYAML(tablevel + 1, stream);
+    }
+    
     stream << std::endl;
 }
 
