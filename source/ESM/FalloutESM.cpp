@@ -87,6 +87,17 @@ void FalloutESM::Parse() {
                 break;
             }
             
+            //Static objects
+            case ESMTag::STAT:
+            {
+                if (ParseStatics(substream) == false) {
+                    return;
+                }
+                
+                break;
+            }
+            
+            //Interior Cells
             case ESMTag::CELL:
             {
                 if (ParseCells(substream) == false) {
@@ -96,6 +107,7 @@ void FalloutESM::Parse() {
                 break;
             }
             
+            //Exterior Worldspaces and their cells
             case ESMTag::WRLD:
             {
                 if (ParseWorlds(substream) == false) {
@@ -254,6 +266,32 @@ bool FalloutESM::ParseScripts(ESMStream& substream) {
     return true;
 }
 
+bool FalloutESM::ParseStatics(ESMStream& substream) {
+    while(substream.IsValid() == true) {
+        RecordHeader header;
+        
+        ParseRecordHeader(substream, header);
+        
+        if (header.Tag != ESMTag::STAT) {
+            mLoadMessages.push_back("Error: encountered an invalid record in the static object group");
+            return false;
+        }
+        
+        ESMStream recordStream(substream, header.Size);
+        StaticObject object(header.Meta.AsRecord.FormID);
+        
+        if (object.Parse(recordStream) == false) {
+            mLoadMessages.push_back("Error: error parsing a static object record");
+            return false;
+        }
+        
+        mStaticObjects.insert(std::pair<FormIdentifier, StaticObject>(header.Meta.AsRecord.FormID, std::move(object)));
+        mEntityTypeMap.insert(std::pair<FormIdentifier, ESMTag>(header.Meta.AsRecord.FormID, ESMTag::STAT));
+    }
+    
+    return true;
+}
+
 bool FalloutESM::ParseCells(ESMStream& substream) {
     while(substream.IsValid() == true) {
         RecordHeader header;
@@ -281,8 +319,6 @@ bool FalloutESM::ParseWorlds(ESMStream& substream) {
         RecordHeader header;
         
         ParseRecordHeader(substream, header);
-        
-        std::cout << "Top level world tag: " << ESMUtility::TagToString(header.Tag) << " with size " << header.Size << std::endl;
         
         switch(header.Tag) {
             case ESMTag::GRUP:
@@ -586,9 +622,6 @@ bool FalloutESM::ParseWorldCellGroup(ESMStream& stream, FormIdentifier parentWor
                     return false;
                 }
                 
-                //TODO: Remove once done
-                std::cout << "Added cell " << cell.GetEditorID() << std::endl;
-                
                 mCells.insert(std::pair<FormIdentifier, Cell>(header.Meta.AsRecord.FormID, std::move(cell)));
                 world.GetCellsWritable().push_back(header.Meta.AsRecord.FormID);
                 break;
@@ -648,8 +681,6 @@ bool FalloutESM::ParseCellExteriorGroup(ESMStream& stream, Worldspace& world, in
         RecordHeader header;
         
         ParseRecordHeader(stream, header);
-        
-        std::cout << "Exterior group tag: " << ESMUtility::TagToString(header.Tag) << std::endl;
         
         switch(header.Tag) {
             case ESMTag::GRUP:

@@ -2,6 +2,7 @@
 #include "../ESMTag.hpp"
 #include "../Record/Records.hpp"
 #include "../ESMStream.hpp"
+#include "../ESMUtility.hpp"
 #include "FieldParser.hpp"
 using namespace ESM;
 
@@ -143,12 +144,18 @@ bool Worldspace::Parse(ESMStream& stream) {
     return true;
 }
 
-void Worldspace::ExportXML(std::ostream& output) const {
-    output << "<worldspace id=\"" << mEditorID << "\" form=\"" << mFormID << "\">" << std::endl;
+void Worldspace::ExportYAML(int tablevel, std::ostream& stream, const std::map<FormIdentifier, Cell>& cellMap) const {
+    ESMUtility::EmitTabs(tablevel, stream) << "- form: " << mFormID << std::endl;
+    ESMUtility::EmitTabs(tablevel, stream) << "  edid: " << mEditorID << std::endl;
+    ESMUtility::EmitTabs(tablevel, stream) << "  name: " << mFullName << std::endl;
+    ESMUtility::EmitTabs(tablevel, stream) << "  cells:" << std::endl;
     
-    for (auto itr = mCells.begin(); itr != mCells.end(); ++itr) {
-        output << "\t<cell form=\"" << (*itr) << "\" />" << std::endl;
+    for(auto itr = mCells.begin(); itr != mCells.end(); ++itr) {
+        auto cellItr = cellMap.find(*itr);
+        
+        if (cellItr == cellMap.end())
+            continue; //TODO: This shouldn't ever happen, it's checked during the load
+        
+        (*cellItr).second.ExportYAML(tablevel + 1, stream);
     }
-    
-    output << "</worldspace>" << std::endl;
 }

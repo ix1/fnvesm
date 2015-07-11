@@ -15,6 +15,8 @@ namespace ESM
         
         bool Parse(ESMStream& stream);
         
+        void ExportYAML(int tablevel, std::ostream& stream) const;
+        
         inline WorldObjectType GetType() const {
             return mType;
         }

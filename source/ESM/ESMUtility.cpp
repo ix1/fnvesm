@@ -50,3 +50,11 @@ bool ESMUtility::ZlibDecompress(std::vector<uint8_t>& source, std::vector<uint8_
     
     return true;
 }
+
+std::ostream& ESMUtility::EmitTabs(int tabs, std::ostream& stream) {
+    for(int x = 0; x < tabs; ++x) {
+        stream << '\t';
+    }
+    
+    return stream;
+}

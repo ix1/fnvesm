@@ -81,7 +81,7 @@ namespace ESM
             mOffset += length;
         }
         
-        inline void ReadCString(uint16_t length, std::string& outValue) {
+        inline void ReadCString(size_t length, std::string& outValue) {
             if (mOffset + length <= mLocalSize) {
                 mBuffer.reserve(length);
                 mStream.read((char *)&mBuffer[0], length);

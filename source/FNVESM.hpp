@@ -21,5 +21,7 @@ namespace ESM
         float X;
         float Y;
         float Z;
+        
+        Vector3F() : X(0.0f), Y(0.0f), Z(0.0f) {}
     };
 }

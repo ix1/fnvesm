@@ -28,6 +28,10 @@ namespace ESM
             return mScripts;
         }
         
+        inline const std::map<FormIdentifier, StaticObject>& GetStaticObjects() const {
+            return mStaticObjects;
+        }
+        
         inline const std::map<FormIdentifier, LandscapeTextureSet>& GetLandscapeTextureSets() const {
             return mLandTextures;
         }
@@ -49,6 +53,7 @@ namespace ESM
         bool ParseTextureSets(ESMStream& substream);
         bool ParseLandTextureSets(ESMStream& substream);
         bool ParseScripts(ESMStream& substream);
+        bool ParseStatics(ESMStream& substream);
         bool ParseCells(ESMStream& substream);
         bool ParseWorlds(ESMStream& substream);
         bool ParseCellGroup(ESM::ESMStream& stream, int block, int subblock);
@@ -69,10 +74,15 @@ namespace ESM
         std::vector<std::string> mLoadMessages;
         bool mIsOpen;
         
+        //Map form ID to object tag type
+        std::map<FormIdentifier, ESMTag> mEntityTypeMap;
+        
         std::map<FormIdentifier, GameSetting> mSettings;
         std::map<FormIdentifier, TextureSet> mTextures;
         std::map<FormIdentifier, LandscapeTextureSet> mLandTextures;
         std::map<FormIdentifier, FalloutScript> mScripts;
+        
+        std::map<FormIdentifier, StaticObject> mStaticObjects;
         
         std::map<FormIdentifier, Cell> mCells;
         std::map<FormIdentifier, Worldspace> mWorldspaces;

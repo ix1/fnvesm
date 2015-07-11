@@ -102,6 +102,8 @@ namespace ESM
         int32_t X;
         int32_t Y;
         LandHideFlag LandHideFlags; //FIXME: documented but doesn't exist in the FNV master
+        
+        XCLCField() : X(0), Y(0), LandHideFlags(LandHideFlag::None) { }
     };
     
     struct XCLLField {

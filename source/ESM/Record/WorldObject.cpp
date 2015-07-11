@@ -2,6 +2,7 @@
 #include "../ESMTag.hpp"
 #include "../Record/Records.hpp"
 #include "../ESMStream.hpp"
+#include "../ESMUtility.hpp"
 #include "FieldParser.hpp"
 using namespace ESM;
 
@@ -52,6 +53,18 @@ bool WorldObject::Parse(ESMStream& stream) {
     }
     
     return true;
+}
+
+void WorldObject::ExportYAML(int tablevel, std::ostream& stream) const {
+    ESMUtility::EmitTabs(tablevel, stream) << "- form:  " << (uint32_t)mFormID << std::endl;
+    ESMUtility::EmitTabs(tablevel, stream) << "  type:  " << GetTypeName() << std::endl;
+    ESMUtility::EmitTabs(tablevel, stream) << "  base:  " << mBaseID << std::endl;
+    ESMUtility::EmitTabs(tablevel, stream) << "  edid:  " << mEditorID << std::endl;
+    ESMUtility::EmitTabs(tablevel, stream) << "  scale: " << mScale << std::endl;
+    ESMUtility::EmitTabs(tablevel, stream) << "  pxyz:  " << mPosition.X << ',' << mPosition.Y << ',' << mPosition.Z << std::endl;
+    ESMUtility::EmitTabs(tablevel, stream) << "  rxyz:  " << mRotation.X << ',' << mRotation.Y << ',' << mRotation.Z << std::endl;
+    
+    stream << std::endl;
 }
 
 const std::string& WorldObject::GetTypeName() const {

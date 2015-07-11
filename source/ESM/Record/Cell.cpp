@@ -2,6 +2,7 @@
 #include "../ESMTag.hpp"
 #include "../Record/Records.hpp"
 #include "../ESMStream.hpp"
+#include "../ESMUtility.hpp"
 #include "FieldParser.hpp"
 using namespace ESM;
 
@@ -128,6 +129,20 @@ bool Cell::Parse(ESMStream& stream) {
     }
     
     return true;
+}
+
+void Cell::ExportYAML(int tablevel, std::ostream& stream) const {
+    ESMUtility::EmitTabs(tablevel, stream) << "- form: " << (uint32_t)mFormID << std::endl;
+    ESMUtility::EmitTabs(tablevel, stream) << "  name: " << mFullName << std::endl;
+    ESMUtility::EmitTabs(tablevel, stream) << "  edid: " << mEditorID << std::endl;
+    ESMUtility::EmitTabs(tablevel, stream) << "  xy:   " << mCellLocation.X << ',' << mCellLocation.Y << std::endl;
+    ESMUtility::EmitTabs(tablevel, stream) << "  pobjs:" << std::endl;
+    
+    for(auto itr = mObjects.begin(); itr != mObjects.end(); ++itr) {
+        (*itr).ExportYAML(tablevel + 1, stream);
+    }
+    
+    stream << std::endl;
 }
 
 void Cell::AddObject(CellChildType cellType, WorldObject& object) {

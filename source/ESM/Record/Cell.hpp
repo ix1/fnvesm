@@ -34,6 +34,8 @@ namespace ESM
         
         bool Parse(ESMStream& stream);
         
+        void ExportYAML(int tablevel, std::ostream& stream) const;
+        
         inline FormIdentifier GetFormID() const {
             return mFormID;
         }
@@ -44,6 +46,10 @@ namespace ESM
         
         inline const std::string& GetFullName() const {
             return mFullName;
+        }
+        
+        inline bool IsInterior() const {
+            return mLocationType == CellLocationType::Internal;
         }
         
         inline CellFlag GetFlags() const {
@@ -57,6 +63,7 @@ namespace ESM
     private:
         FormIdentifier mFormID;
         
+        //Still unsure as to what these relate to, seemingly random
         union {
             struct {
                 int Block;
@@ -75,6 +82,7 @@ namespace ESM
         std::string mFullName;
         CellFlag mFlags;
         
+        //This appears to be the important location
         XCLCField mCellLocation;
         XCLLField mLighting;
         IMPFField mFootstepMaterial;

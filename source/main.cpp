@@ -24,30 +24,30 @@ int main(int argc, char **argv) {
         
         return -1;
     }
+
+    std::cout << "statics:" << std::endl;
     
-    //std::cout << "Successfully loaded." << std::endl;
+    for (auto itr = mainESM.GetStaticObjects().begin(); itr != mainESM.GetStaticObjects().end(); ++itr) {
+        (*itr).second.ExportYAML(1, std::cout);
+    }
     
-    const auto scripts = mainESM.GetScripts();
+    std::cout << std::endl;
     
-    std::cout << "There are: " << scripts.size() << " scripts" << std::endl;
-    std::cout << "There are: " << mainESM.GetGameSettings().size() << " settings" << std::endl;
+    std::cout << "interiors:" << std::endl;
     
-    /*for(auto itr = scripts.begin(); itr != scripts.end(); ++itr) {
-       auto pair = *itr;
-       
-       std::cout << "<script id=\"" << pair.second.GetEditorID() << "\" form=\"" << pair.first << "\">" << std::endl;
-       
-       std::cout << pair.second.GetScriptSource() << std::endl;
-       
-       std::cout << "</script>" << std::endl;
-    }*/
+    for(auto itr = mainESM.GetCells().begin(); itr != mainESM.GetCells().end(); ++itr) {
+        if ((*itr).second.IsInterior() == false)
+            continue;
+        
+        (*itr).second.ExportYAML(1, std::cout);
+    }
     
-    const auto worldspaces = mainESM.GetWorldspaces();
+    std::cout << std::endl;
     
-    std::cout << "There are: " << worldspaces.size() << " world spaces." << std::endl;
+    std::cout << "worldspaces:" << std::endl;
     
-    for(auto itr = worldspaces.begin(); itr != worldspaces.end(); ++itr) {
-        (*itr).second.ExportXML(std::cout);
+    for(auto itr = mainESM.GetWorldspaces().begin(); itr != mainESM.GetWorldspaces().end(); ++itr) {
+        (*itr).second.ExportYAML(1, std::cout, mainESM.GetCells());
     }
     
     return 0;

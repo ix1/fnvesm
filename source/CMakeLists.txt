@@ -14,8 +14,14 @@ add_executable(fnvesm
     ESM/Record/LandDefinition.hpp
     ESM/Record/LandDefinition.cpp
     
+    ESM/Record/ModelData.hpp
+    ESM/Record/ModelData.cpp
+    
     ESM/Record/RecordHeader.hpp
     ESM/Record/Records.hpp
+    
+    ESM/Record/StaticObject.hpp
+    ESM/Record/StaticObject.cpp
     
     ESM/Record/TextureSet.hpp
     ESM/Record/TextureSet.cpp

@@ -11,7 +11,7 @@ namespace ESM
         
         bool Parse(ESMStream& stream);
         
-        void ExportXML(std::ostream& output) const;
+        void ExportYAML(int tablevel, std::ostream& output, const std::map<FormIdentifier, Cell>& cellMap) const;
         
         inline FormIdentifier GetFormID() const {
             return mFormID;
