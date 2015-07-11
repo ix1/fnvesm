@@ -7,14 +7,14 @@
 using namespace ESM;
 
 Cell::Cell(FormIdentifier id, int block, int subblock) 
-    : mFormID(id), mLocationType(CellLocationType::Internal)
+    : mFormID(id), mLocationType(CellLocationType::Internal), mLandscapeID(0)
 {
     mCellBlockLocation.AsInterior.Block = block;
     mCellBlockLocation.AsInterior.Subblock = subblock;
 }
 
 Cell::Cell(FormIdentifier id, int x, int y, bool isblock) 
-    : mFormID(id), mLocationType(CellLocationType::External)
+    : mFormID(id), mLocationType(CellLocationType::External), mLandscapeID(0)
 {
     mCellBlockLocation.AsExterior.X = x;
     mCellBlockLocation.AsExterior.Y = y;

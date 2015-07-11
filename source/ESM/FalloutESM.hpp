@@ -85,6 +85,9 @@ namespace ESM
         std::map<FormIdentifier, StaticObject> mStaticObjects;
         
         std::map<FormIdentifier, Cell> mCells;
+        
+        std::map<FormIdentifier, LandDefinition> mLandscapes;
+        
         std::map<FormIdentifier, Worldspace> mWorldspaces;
     };
 }

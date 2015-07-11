@@ -105,6 +105,7 @@ namespace ESM
         FormIdentifier mOwnerID;
         FormIdentifier mAcousticSpaceID;
         FormIdentifier mMusicID;
+        FormIdentifier mLandscapeID;
         
         uint32_t mLightTemplateFlags;
         uint32_t mFactionRank;
@@ -113,5 +114,9 @@ namespace ESM
         uint8_t mUnusedByte;
         
         void AddObject(CellChildType cellType, WorldObject& object);
+        
+        inline void SetLandscapeID(FormIdentifier id) {
+            mLandscapeID = id;
+        }
     };
 }

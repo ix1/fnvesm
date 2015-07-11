@@ -4,6 +4,8 @@
 #include "../ESMStream.hpp"
 #include "../ESMUtility.hpp"
 #include "FieldParser.hpp"
+#include <iostream>
+#include <iomanip>
 using namespace ESM;
 
 StaticObject::StaticObject(FormIdentifier id)
@@ -17,14 +19,21 @@ StaticObject::~StaticObject() {
 }
 
 bool StaticObject::Parse(ESMStream& stream) {
+    std::cout << "Parsing static object: " << (uint32_t)mFormID << " at file offset: " << std::hex << stream.GetAbsolutePosition() << std::dec << std::endl;
+    
     while(stream.IsValid() == true) {
         FieldHeader header;
         stream.ReadFieldHeader(header);
+        
+        std::cout << "\tTag: " << ESMUtility::TagToString(header.Tag) << std::endl << "\tSize: " << header.Size << std::endl;
+        std::cout << "\tStream local offset: " << stream.GetOffset() << std::endl << "\tStream size: " << stream.GetSize() << std::endl;
         
         switch(header.Tag) {
             case ESMTag::EDID:
             {
                 FieldParser::ParseEDIDField(stream, header.Size, mEditorID);
+                std::cout << "\tEditor ID: " << mEditorID << std::endl;
+                
                 break;
             }
             
@@ -34,6 +43,14 @@ bool StaticObject::Parse(ESMStream& stream) {
             case ESMTag::MOD4:
             {
                 std::string modelName;
+                
+                if (header.Size + stream.GetOffset() > stream.GetSize()) {
+                    std::cout << "\t============= FOUND BAD MOD* FIELD =============" << std::endl;
+                    
+                    std::cout << "\tOffset: " << stream.GetAbsolutePosition() << std::endl;
+                    
+                    assert(false && "Halting");
+                }
                 
                 stream.ReadCString(header.Size, modelName);
                 
@@ -68,6 +85,8 @@ bool StaticObject::Parse(ESMStream& stream) {
             default:
                 return false;
         }
+        
+        std::cout << std::endl;
     }
     
     return true;

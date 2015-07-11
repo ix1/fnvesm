@@ -21,10 +21,18 @@ bool LandDefinition::Parse(ESMStream& stream) {
         
         stream.ReadFieldHeader(header);
         
-        stream.Skip(header.Size);
-        
         switch(header.Tag) {
+            case ESMTag::VHGT:
+                if (header.Size != (sizeof(mHeightmap.Height) + sizeof(float) + 3))
+                    return false;
+                
+                FieldParser::ParseFloatField(stream, 4, mHeightmap.Offset);
+                stream.ReadRaw(mHeightmap.Height, sizeof(mHeightmap.Height));
+                stream.Skip(3);
+                break;
+                
             default:
+                stream.Skip(header.Size);
                 break;
         }
     }

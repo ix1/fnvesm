@@ -571,6 +571,8 @@ bool FalloutESM::ParseCellChildren(FormIdentifier cellID, CellChildType childTyp
                     return false;
                 }
                 
+                cell.SetLandscapeID(header.Meta.AsRecord.FormID);
+                mLandscapes.insert(std::pair<FormIdentifier, LandDefinition>(header.Meta.AsRecord.FormID, std::move(landDefinition)));
                 break;
             }
             

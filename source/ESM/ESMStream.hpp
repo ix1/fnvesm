@@ -120,6 +120,14 @@ namespace ESM
             return mLocalSize;
         }
         
+        inline size_t GetOffset() const {
+            return mOffset;
+        }
+        
+        inline std::streamoff GetAbsolutePosition() const {
+            return mStream.tellg();
+        }
+        
     private:
         std::istream& mStream;
         std::vector<uint8_t>& mBuffer;
