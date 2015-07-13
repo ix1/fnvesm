@@ -2,9 +2,15 @@
 
 namespace ESM
 {
+    enum class StaticObjectType {
+        Static = 0,
+        Furniture,
+        Tree
+    };
+    
     class StaticObject {
     public:
-        StaticObject(FormIdentifier id);
+        StaticObject(StaticObjectType type, FormIdentifier id);
         ~StaticObject();
         
         bool Parse(ESMStream& stream);
@@ -16,11 +22,14 @@ namespace ESM
         }
         
     private:
+        StaticObjectType mType;
         FormIdentifier mFormID;
         std::string mEditorID;
+        std::string mFullName;
         OBNDField mBounds;
         std::vector<ModelData> mModelData;
         FormIdentifier mSoundID;
+        FormIdentifier mScriptID;
         int8_t mBrushPassthroughSound;
     };
 }

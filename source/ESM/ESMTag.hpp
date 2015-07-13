@@ -369,6 +369,7 @@ namespace ESM
         SCHR = 0x52484353,
         SCOL = 0x4C4F4353,
         SCPT = 0x54504353,
+        SCRI = 0x49524353,
         SCRL = 0x4C524353,
         SCRO = 0x4F524353,
         SCRV = 0x56524353,

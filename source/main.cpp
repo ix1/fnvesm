@@ -33,6 +33,14 @@ int main(int argc, char **argv) {
     
     std::cout << std::endl;
     
+    std::cout << "furniture:" << std::endl;
+    
+    for (auto itr = mainESM.GetFurniture().begin(); itr != mainESM.GetFurniture().end(); ++itr) {
+        (*itr).second.ExportYAML(1, std::cout);
+    }
+    
+    std::cout << std::endl;
+    
     std::cout << "interiors:" << std::endl;
     
     for(auto itr = mainESM.GetCells().begin(); itr != mainESM.GetCells().end(); ++itr) {
@@ -49,6 +57,21 @@ int main(int argc, char **argv) {
     for(auto itr = mainESM.GetWorldspaces().begin(); itr != mainESM.GetWorldspaces().end(); ++itr) {
         (*itr).second.ExportYAML(1, std::cout, mainESM.GetCells());
     }
+
+    //Export scripts
+//     auto scripts = mainESM.GetScripts();
+//     
+//     for(auto itr = scripts.begin(); itr != scripts.end(); ++itr) {
+//         auto script = (*itr).second;
+//         
+//         std::stringstream filename;
+//         
+//         filename << "scripts/" << script.GetFormID() << ".txt";
+//         
+//         std::fstream scriptText(filename.str(), std::fstream::out | std::fstream::binary);
+//         
+//         scriptText << script.GetScriptSource();
+//     }
     
     return 0;
 }

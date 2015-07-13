@@ -28,6 +28,14 @@ namespace ESM
             return mScripts;
         }
         
+        inline const std::map<FormIdentifier, StaticObject>& GetFurniture() const {
+            return mFurniture;
+        }
+        
+        inline const std::map<FormIdentifier, StaticObject>& GetTrees() const {
+            return mTrees;
+        }
+        
         inline const std::map<FormIdentifier, StaticObject>& GetStaticObjects() const {
             return mStaticObjects;
         }
@@ -53,17 +61,18 @@ namespace ESM
         bool ParseTextureSets(ESMStream& substream);
         bool ParseLandTextureSets(ESMStream& substream);
         bool ParseScripts(ESMStream& substream);
+        bool ParseFurniture(ESMStream& substream);
         bool ParseStatics(ESMStream& substream);
         bool ParseCells(ESMStream& substream);
         bool ParseWorlds(ESMStream& substream);
-        bool ParseCellGroup(ESM::ESMStream& stream, int block, int subblock);
+        bool ParseCellGroup(ESMStream& stream, int block, int subblock);
         
         bool ParseCellInnerGroup(ESMStream& stream, const RecordHeader& header, int block, int subblock);
         bool ParseCellChildrenGroup(ESMStream& stream, const RecordHeader& header, int block, int subblock);
         bool ParseCellChildren(FormIdentifier cellID, CellChildType childType, ESMStream& stream, int block, int subblock);
         
         bool ParseWorldCellGroup(ESMStream& stream, FormIdentifier parentWorld);
-        bool ParseWorldInnerGroup(ESM::ESMStream& stream, ESM::Worldspace& world, const ESM::RecordHeader& header, int x, int y);
+        bool ParseWorldInnerGroup(ESMStream& stream, ESM::Worldspace& world, const RecordHeader& header, int x, int y);
         bool ParseCellExteriorGroup(ESMStream& stream, Worldspace& world, int x, int y, bool isblock);
         
     private:
@@ -82,6 +91,8 @@ namespace ESM
         std::map<FormIdentifier, LandscapeTextureSet> mLandTextures;
         std::map<FormIdentifier, FalloutScript> mScripts;
         
+        std::map<FormIdentifier, StaticObject> mFurniture;
+        std::map<FormIdentifier, StaticObject> mTrees;
         std::map<FormIdentifier, StaticObject> mStaticObjects;
         
         std::map<FormIdentifier, Cell> mCells;

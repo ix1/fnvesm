@@ -1,13 +1,15 @@
 #pragma once
 
 namespace ESM
-{
+{    
     class FalloutScript {
     public:
         FalloutScript(FormIdentifier id);
         ~FalloutScript();
         
         bool Parse(ESMStream& stream);
+        
+        void ExportJSON(std::ostream& stream);
         
         inline FormIdentifier GetFormID() const {
             return mFormID;
@@ -34,7 +36,7 @@ namespace ESM
         std::string mEditorID;
         std::string mScriptSource;
         std::vector<uint8_t> mScriptBytecode;
+        std::vector<FormIdentifier> mReferences;
         SCHRField mScriptHeader;
-        
     };
 }

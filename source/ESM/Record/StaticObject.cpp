@@ -8,8 +8,8 @@
 #include <iomanip>
 using namespace ESM;
 
-StaticObject::StaticObject(FormIdentifier id)
-    : mFormID(id)
+StaticObject::StaticObject(StaticObjectType type,FormIdentifier id)
+    : mType(type), mFormID(id)
 {
     
 }
@@ -28,6 +28,12 @@ bool StaticObject::Parse(ESMStream& stream) {
             {
                 FieldParser::ParseEDIDField(stream, header.Size, mEditorID);
                 
+                break;
+            }
+            
+            case ESMTag::FULL:
+            {
+                FieldParser::ParseEDIDField(stream, header.Size, mFullName);
                 break;
             }
             
@@ -62,9 +68,38 @@ bool StaticObject::Parse(ESMStream& stream) {
                 break;
             }
             
+            case ESMTag::SCRI:
+            {
+                FieldParser::ParseFormID(stream, header.Size, mScriptID);
+                break;
+            }
+            
             case ESMTag::RNAM:
             {
                 FieldParser::ParseFormID(stream, header.Size, mSoundID);
+                break;
+            }
+            
+            case ESMTag::MNAM:
+            {
+                stream.Skip(header.Size);
+                break;
+            }
+            
+            //Destruction header
+            case ESMTag::DEST:
+            {
+                stream.Skip(header.Size);
+                break;
+            }
+            
+            //Destruction stage data
+            case ESMTag::DSTD:
+            case ESMTag::DMDL:
+            case ESMTag::DMDT:
+            case ESMTag::DSTF:
+            {
+                stream.Skip(header.Size);
                 break;
             }
             
@@ -79,6 +114,15 @@ bool StaticObject::Parse(ESMStream& stream) {
 void StaticObject::ExportYAML(int tablevel, std::ostream& stream) const {
     ESMUtility::EmitTabs(tablevel, stream) << "- form:  " << mFormID << std::endl;
     ESMUtility::EmitTabs(tablevel, stream) << "  edid:  " << mEditorID << std::endl;
+    
+    if (mType == StaticObjectType::Furniture) {
+        ESMUtility::EmitTabs(tablevel, stream) << "  full:  " << mFullName << std::endl;
+        ESMUtility::EmitTabs(tablevel, stream) << "  scpt:  " << mScriptID << std::endl;
+    }
+    
+    ESMUtility::EmitTabs(tablevel, stream) << "  lwrb:  " << mBounds.Lower.X << "," << mBounds.Lower.Y << "," << mBounds.Lower.Z << std::endl;
+    ESMUtility::EmitTabs(tablevel, stream) << "  uprb:  " << mBounds.Upper.X << "," << mBounds.Upper.Y << "," << mBounds.Upper.Z << std::endl;
+    
     ESMUtility::EmitTabs(tablevel, stream) << "  model: " << std::endl;
     
     for(auto itr = mModelData.begin(); itr != mModelData.end(); ++itr) {

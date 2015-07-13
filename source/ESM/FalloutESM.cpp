@@ -87,6 +87,15 @@ void FalloutESM::Parse() {
                 break;
             }
             
+            //Furniture
+            case ESMTag::FURN:
+            {
+                if (ParseFurniture(substream) == false)
+                    return;
+                
+                break;
+            }
+            
             //Static objects
             case ESMTag::STAT:
             {
@@ -266,6 +275,32 @@ bool FalloutESM::ParseScripts(ESMStream& substream) {
     return true;
 }
 
+bool FalloutESM::ParseFurniture(ESMStream& substream) {
+    while(substream.IsValid() == true) {
+        RecordHeader header;
+        
+        ParseRecordHeader(substream, header);
+        
+        if (header.Tag != ESMTag::FURN) {
+            mLoadMessages.push_back("Error: encountered an invalid record in the furniture object group");
+            return false;
+        }
+        
+        ESMStream recordStream(substream, header.Size);
+        StaticObject object(StaticObjectType::Furniture, header.Meta.AsRecord.FormID);
+        
+        if (object.Parse(recordStream) == false) {
+            mLoadMessages.push_back("Error: error parsing a furniture object record");
+            return false;
+        }
+        
+        mFurniture.insert(std::pair<FormIdentifier, StaticObject>(header.Meta.AsRecord.FormID, std::move(object)));
+        mEntityTypeMap.insert(std::pair<FormIdentifier, ESMTag>(header.Meta.AsRecord.FormID, ESMTag::FURN));
+    }
+    
+    return true;
+}
+
 bool FalloutESM::ParseStatics(ESMStream& substream) {
     while(substream.IsValid() == true) {
         RecordHeader header;
@@ -278,7 +313,7 @@ bool FalloutESM::ParseStatics(ESMStream& substream) {
         }
         
         ESMStream recordStream(substream, header.Size);
-        StaticObject object(header.Meta.AsRecord.FormID);
+        StaticObject object(StaticObjectType::Static, header.Meta.AsRecord.FormID);
         
         if (object.Parse(recordStream) == false) {
             mLoadMessages.push_back("Error: error parsing a static object record");

@@ -38,9 +38,17 @@ bool FalloutScript::Parse(ESMStream& stream) {
                 FieldParser::ParseEDIDField(stream, header.Size, mScriptSource);
                 break;
                 
+            case ESMTag::SCRO:
+            {
+                FormIdentifier id = 0;
+                
+                FieldParser::ParseFormID(stream, header.Size, id);
+                mReferences.push_back(id);
+                break;
+            }   
+            
             case ESMTag::SCVR:
             case ESMTag::SCRV: //TODO: This is undocumented, fixed uint32_t field
-            case ESMTag::SCRO:
             case ESMTag::SLSD:
                 //TODO: Handle these
                 stream.Skip(header.Size);
@@ -52,4 +60,21 @@ bool FalloutScript::Parse(ESMStream& stream) {
     }
     
     return true;
-} 
+}
+
+void FalloutScript::ExportJSON(std::ostream& stream) {
+    stream << "{" << std::endl;
+    
+    stream << "\"edid\": \"" << mEditorID << "\"," << std::endl;
+    stream << "\"form\": " << mFormID << "," << std::endl;
+    stream << "\"refcount\": " << mScriptHeader.ReferenceCount << "," << std::endl;
+    stream << "\"varcount\": " << mScriptHeader.VariableCount << "," << std::endl;
+    stream << "\"refs\": [";
+    
+    for(auto itr = mReferences.begin(); itr != mReferences.end(); ++itr)
+        stream << *itr << ", ";
+    
+    stream << " 0 ];" << std::endl;
+    
+    stream << "}" << std::endl;
+}
