@@ -40,6 +40,14 @@ int main(int argc, char **argv) {
     }
     
     std::cout << std::endl;
+
+    std::cout << "activators:" << std::endl;
+    
+    for (auto itr = mainESM.GetActivators().begin(); itr != mainESM.GetActivators().end(); ++itr) {
+        (*itr).second.ExportYAML(1, std::cout);
+    }
+    
+    std::cout << std::endl;
     
     std::cout << "interiors:" << std::endl;
     

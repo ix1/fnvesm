@@ -31,6 +31,10 @@ namespace ESM
         inline const std::map<FormIdentifier, StaticObject>& GetFurniture() const {
             return mFurniture;
         }
+
+        inline const std::map<FormIdentifier, StaticObject>& GetActivators() const {
+            return mActivators;
+        }
         
         inline const std::map<FormIdentifier, StaticObject>& GetTrees() const {
             return mTrees;
@@ -62,6 +66,7 @@ namespace ESM
         bool ParseLandTextureSets(ESMStream& substream);
         bool ParseScripts(ESMStream& substream);
         bool ParseFurniture(ESMStream& substream);
+        bool ParseActivators(ESMStream& substream);
         bool ParseStatics(ESMStream& substream);
         bool ParseCells(ESMStream& substream);
         bool ParseWorlds(ESMStream& substream);
@@ -92,6 +97,7 @@ namespace ESM
         std::map<FormIdentifier, FalloutScript> mScripts;
         
         std::map<FormIdentifier, StaticObject> mFurniture;
+        std::map<FormIdentifier, StaticObject> mActivators;
         std::map<FormIdentifier, StaticObject> mTrees;
         std::map<FormIdentifier, StaticObject> mStaticObjects;
         

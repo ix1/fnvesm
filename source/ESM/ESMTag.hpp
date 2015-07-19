@@ -481,6 +481,7 @@ namespace ESM
         XA0TX = 0x58543040,
         XACT = 0x54434158,
         XAIAD = 0x4441490A,
+        XATO = 0x4f544158,
         XALP = 0x504C4158,
         XAPD = 0x44504158,
         XAPR = 0x52504158,
