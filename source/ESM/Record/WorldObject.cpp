@@ -12,7 +12,7 @@ static const std::string sWorldObjectTypeCreatureName = "Creature";
 static const std::string sWorldObjectTypeCharacterName = "Character";
 
 WorldObject::WorldObject(WorldObjectType type, FormIdentifier id) 
-    :  mType(type), mFormID(id)
+    :  mType(type), mFormID(id), mScale(1.0f)
 {
     
 }
