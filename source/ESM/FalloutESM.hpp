@@ -55,6 +55,10 @@ namespace ESM
         inline const std::map<FormIdentifier, Worldspace>& GetWorldspaces() const {
             return mWorldspaces;
         }
+
+        inline const std::map<FormIdentifier, Message>& GetMessages() const {
+            return mMessages;
+        }
         
     protected:
         void Parse();
@@ -67,6 +71,7 @@ namespace ESM
         bool ParseScripts(ESMStream& substream);
         bool ParseFurniture(ESMStream& substream);
         bool ParseActivators(ESMStream& substream);
+        bool ParseMessages(ESMStream& substream);
         bool ParseStatics(ESMStream& substream);
         bool ParseCells(ESMStream& substream);
         bool ParseWorlds(ESMStream& substream);
@@ -100,6 +105,8 @@ namespace ESM
         std::map<FormIdentifier, StaticObject> mActivators;
         std::map<FormIdentifier, StaticObject> mTrees;
         std::map<FormIdentifier, StaticObject> mStaticObjects;
+
+        std::map<FormIdentifier, Message> mMessages;
         
         std::map<FormIdentifier, Cell> mCells;
         

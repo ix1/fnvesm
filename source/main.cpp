@@ -66,6 +66,12 @@ int main(int argc, char **argv) {
         (*itr).second.ExportYAML(1, std::cout, mainESM.GetCells());
     }
 
+    std::cout << "messages:" << std::endl;
+
+    for (auto itr = mainESM.GetMessages().begin(); itr != mainESM.GetMessages().end(); ++itr) {
+        (*itr).second.ExportYAML(1, std::cout);
+    }
+
     //Export scripts
 //     auto scripts = mainESM.GetScripts();
 //     

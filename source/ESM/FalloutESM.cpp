@@ -134,6 +134,14 @@ void FalloutESM::Parse() {
                 
                 break;
             }
+
+            case ESMTag::MESG:
+            {
+                if (ParseMessages(substream) == false) {
+                    return;
+                }
+                break;
+            }
                 
             default:
                 substream.Skip(substream.GetSize());
@@ -331,6 +339,31 @@ bool FalloutESM::ParseActivators(ESMStream& substream) {
         
         mActivators.insert(std::pair<FormIdentifier, StaticObject>(header.Meta.AsRecord.FormID, std::move(object)));
         mEntityTypeMap.insert(std::pair<FormIdentifier, ESMTag>(header.Meta.AsRecord.FormID, ESMTag::ACTI));
+    }
+    
+    return true;
+}
+
+bool FalloutESM::ParseMessages(ESMStream& substream) {
+    while(substream.IsValid() == true) {
+        RecordHeader header;
+        
+        ParseRecordHeader(substream, header);
+        
+        if (header.Tag != ESMTag::MESG) {
+            mLoadMessages.push_back("Error: encountered an invalid record in the messages group");
+            return false;
+        }
+        
+        ESMStream recordStream(substream, header.Size);
+        Message message(header.Meta.AsRecord.FormID);
+        
+        if (message.Parse(recordStream) == false) {
+            mLoadMessages.push_back("Error: error parsing a message record");
+            return false;
+        }
+
+        mMessages.insert(std::pair<FormIdentifier, Message>(header.Meta.AsRecord.FormID, std::move(message)));
     }
     
     return true;

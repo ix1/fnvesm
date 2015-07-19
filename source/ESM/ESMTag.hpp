@@ -285,6 +285,7 @@ namespace ESM
         NAM3 = 0x334D414E,
         NAM4 = 0x344D414E,
         NAM5 = 0x354D414E,
+        NAM6 = 0x364D414E,
         NAM7 = 0x374D414E,
         NAM8 = 0x384D414E,
         NAM9 = 0x394D414E,
