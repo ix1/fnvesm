@@ -11,3 +11,4 @@
 #include "LandDefinition.hpp"
 #include "Cell.hpp"
 #include "Worldspace.hpp"
+#include "Message.hpp"

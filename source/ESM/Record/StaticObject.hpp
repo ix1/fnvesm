@@ -5,8 +5,11 @@ namespace ESM
     enum class StaticObjectType {
         Static = 0,
         Furniture,
-        Tree
+        Tree,
+        Activator
     };
+
+    std::string StaticObjectTypeName(StaticObjectType type);
     
     class StaticObject {
     public:

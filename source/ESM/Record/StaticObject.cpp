@@ -8,6 +8,18 @@
 #include <iomanip>
 using namespace ESM;
 
+namespace ESM {
+    std::string StaticObjectTypeName(StaticObjectType type) {
+        switch(type) {
+            case StaticObjectType::Static: return "Static";
+            case StaticObjectType::Furniture: return "Furniture";
+            case StaticObjectType::Tree: return "Tree";
+            case StaticObjectType::Activator: return "Activator";
+            default: return "Unknown";
+        }
+    }
+}
+
 StaticObject::StaticObject(StaticObjectType type,FormIdentifier id)
     : mType(type), mFormID(id)
 {
@@ -102,6 +114,23 @@ bool StaticObject::Parse(ESMStream& stream) {
                 stream.Skip(header.Size);
                 break;
             }
+
+            // Sound data, water type
+            case ESMTag::SNAM:
+            case ESMTag::VNAM:
+            case ESMTag::INAM:
+            case ESMTag::WNAM:
+            {                
+                stream.Skip(header.Size);
+                break;
+            }
+
+            // Activation prompt (TODO)
+            case ESMTag::XATO:
+            {
+                stream.Skip(header.Size);
+                break;
+            }
             
             default:
                 return false;
@@ -114,8 +143,10 @@ bool StaticObject::Parse(ESMStream& stream) {
 void StaticObject::ExportYAML(int tablevel, std::ostream& stream) const {
     ESMUtility::EmitTabs(tablevel, stream) << "- form:  " << mFormID << std::endl;
     ESMUtility::EmitTabs(tablevel, stream) << "  edid:  " << mEditorID << std::endl;
+    ESMUtility::EmitTabs(tablevel, stream) << "  type:  " << StaticObjectTypeName(mType) << std::endl;
+
     
-    if (mType == StaticObjectType::Furniture) {
+    if (mType == StaticObjectType::Furniture || mType == StaticObjectType::Activator) {
         ESMUtility::EmitTabs(tablevel, stream) << "  full:  " << mFullName << std::endl;
         ESMUtility::EmitTabs(tablevel, stream) << "  scpt:  " << mScriptID << std::endl;
     }

@@ -32,6 +32,9 @@ add_executable(fnvesm
     ESM/Record/Worldspace.hpp
     ESM/Record/Worldspace.cpp
     
+    ESM/Record/Message.hpp
+    ESM/Record/Message.cpp
+
     ESM/ESMStream.hpp
     ESM/ESMStream.cpp
     

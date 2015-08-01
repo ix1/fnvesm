@@ -40,6 +40,14 @@ int main(int argc, char **argv) {
     }
     
     std::cout << std::endl;
+
+    std::cout << "activators:" << std::endl;
+    
+    for (auto itr = mainESM.GetActivators().begin(); itr != mainESM.GetActivators().end(); ++itr) {
+        (*itr).second.ExportYAML(1, std::cout);
+    }
+    
+    std::cout << std::endl;
     
     std::cout << "interiors:" << std::endl;
     
@@ -56,6 +64,12 @@ int main(int argc, char **argv) {
     
     for(auto itr = mainESM.GetWorldspaces().begin(); itr != mainESM.GetWorldspaces().end(); ++itr) {
         (*itr).second.ExportYAML(1, std::cout, mainESM.GetCells());
+    }
+
+    std::cout << "messages:" << std::endl;
+
+    for (auto itr = mainESM.GetMessages().begin(); itr != mainESM.GetMessages().end(); ++itr) {
+        (*itr).second.ExportYAML(1, std::cout);
     }
 
     //Export scripts
